@@ -34,7 +34,7 @@ static int ulfius_fill_map(void * cls, enum MHD_ValueKind kind, const char * key
   
   if (cls == NULL || key == NULL) {
     // Invalid parameters
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error invalid parameters for ulfius_fill_map");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error invalid parameters for ulfius_fill_map");
     return MHD_NO;
   } else if (u_map_get(((struct _u_map *)cls), key) != NULL) {
     // u_map already has a value with this this key, appending value separated with a comma ',')
@@ -59,7 +59,7 @@ static int ulfius_fill_map(void * cls, enum MHD_ValueKind kind, const char * key
  */
 int ulfius_validate_instance(const struct _u_instance * u_instance) {
   if (u_instance == NULL || u_instance->port <= 0 || u_instance->port >= 65536 || !ulfius_validate_endpoint_list(u_instance->endpoint_list, u_instance->nb_endpoints)) {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, instance or has invalid parameters");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, instance or has invalid parameters");
     return 0;
   }
   return 1;
@@ -75,17 +75,17 @@ int ulfius_validate_endpoint_list(const struct _u_endpoint * endpoint_list, int 
     for (i=0; i < nb_endpoints; i++) {
       if (i == 0 && ulfius_equals_endpoints(ulfius_empty_endpoint(), &endpoint_list[i])) {
         // One can not have an empty endpoint in the beginning of the list
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, no empty endpoint allowed in the beginning of the endpoint list");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, no empty endpoint allowed in the beginning of the endpoint list");
         return 0;
       } else if (!ulfius_is_valid_endpoint(&endpoint_list[i], 0)) {
         // One must set at least the parameters http_method, url_format and callback_function
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, endpoint at index %d has invalid parameters", i);
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, endpoint at index %d has invalid parameters", i);
         return 0;
       }
     }
     return 1;
   } else {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, no endpoint list");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, no endpoint list");
     return 0;
   }
 }
@@ -99,7 +99,7 @@ void * ulfius_uri_logger (void * cls, const char * uri) {
     con_info->callback_first_iteration = 1;
     con_info->request = malloc(sizeof(struct _u_request));
     if (con_info->request == NULL) {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info->request");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info->request");
       free(con_info);
       return NULL;
     }
@@ -111,14 +111,14 @@ void * ulfius_uri_logger (void * cls, const char * uri) {
     }
     con_info->request->http_url = nstrdup(uri);
     if (con_info->request->http_url == NULL) {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info->request->http_url");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info->request->http_url");
       ulfius_clean_request_full(con_info->request);
       free(con_info);
       return NULL;
     }
     con_info->max_post_param_size = 0;
   } else {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info");
   }
   return con_info;
 }
@@ -176,7 +176,7 @@ struct MHD_Daemon * ulfius_run_mhd_daemon(struct _u_instance * u_instance, const
       MHD_OPTION_END
     );
   } else {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, instance already started");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error, instance already started");
     return NULL;
   }
 }
@@ -195,7 +195,7 @@ int ulfius_start_framework(struct _u_instance * u_instance) {
     u_instance->mhd_daemon = ulfius_run_mhd_daemon(u_instance, NULL, NULL);
     
     if (u_instance->mhd_daemon == NULL) {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_start_daemon, aborting");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_start_daemon, aborting");
       u_instance->status = U_STATUS_ERROR;
       return U_ERROR_LIBMHD;
     } else {
@@ -203,7 +203,7 @@ int ulfius_start_framework(struct _u_instance * u_instance) {
       return U_OK;
     }
   } else {
-      y_log_message(Y_LOG_LEVEL_ERROR, "ulfius_start_framework - error input parameters");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "ulfius_start_framework - error input parameters");
     return U_ERROR_PARAMS;
   }
 }
@@ -223,7 +223,7 @@ int ulfius_start_secure_framework(struct _u_instance * u_instance, const char * 
     u_instance->mhd_daemon = ulfius_run_mhd_daemon(u_instance, key_pem, cert_pem);
     
     if (u_instance->mhd_daemon == NULL) {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_start_daemon, aborting");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_start_daemon, aborting");
       u_instance->status = U_STATUS_ERROR;
       return U_ERROR_LIBMHD;
     } else {
@@ -231,7 +231,7 @@ int ulfius_start_secure_framework(struct _u_instance * u_instance, const char * 
       return U_OK;
     }
   } else {
-      y_log_message(Y_LOG_LEVEL_ERROR, "ulfius_start_secure_framework - error input parameters");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "ulfius_start_secure_framework - error input parameters");
     return U_ERROR_PARAMS;
   }
 }
@@ -245,11 +245,11 @@ int ulfius_get_body_from_response(struct _u_response * response, void ** respons
       if (u_map_put(response->map_header, ULFIUS_HTTP_HEADER_CONTENT, ULFIUS_HTTP_ENCODING_JSON) == U_OK) {
         *response_buffer = (void*) json_dumps(response->json_body, JSON_COMPACT);
         if (*response_buffer == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error parsing json body");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error parsing json body");
           response->status = MHD_HTTP_INTERNAL_SERVER_ERROR;
           response->string_body = nstrdup(ULFIUS_HTTP_ERROR_BODY);
           if (response->string_body == NULL) {
-            y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response->string_body");
+            //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response->string_body");
             return U_ERROR_MEMORY;
           }
           return U_ERROR_PARAMS;
@@ -260,7 +260,7 @@ int ulfius_get_body_from_response(struct _u_response * response, void ** respons
         response->status = MHD_HTTP_INTERNAL_SERVER_ERROR;
         *response_buffer = nstrdup(ULFIUS_HTTP_ERROR_BODY);
         if (*response_buffer == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
           return U_ERROR_MEMORY;
         }
         *response_buffer_len = strlen (ULFIUS_HTTP_ERROR_BODY);
@@ -273,7 +273,7 @@ int ulfius_get_body_from_response(struct _u_response * response, void ** respons
         response->status = MHD_HTTP_INTERNAL_SERVER_ERROR;
         response->string_body = nstrdup(ULFIUS_HTTP_ERROR_BODY);
         if (response->string_body == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response->string_body");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response->string_body");
           return U_ERROR_MEMORY;
         }
       } else {
@@ -320,7 +320,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
   // Prepare for POST or PUT input data
   // Initialize the input maps
   if (con_info == NULL) {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error con_info is NULL");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error con_info is NULL");
     return MHD_NO;
   }
   
@@ -333,7 +333,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
     con_info->request->http_verb = nstrdup(method);
     con_info->request->client_address = malloc(sizeof(struct sockaddr));
     if (con_info->request->client_address == NULL || con_info->request->http_verb == NULL) {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating client_address or http_verb");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating client_address or http_verb");
       return MHD_NO;
     }
     memcpy(con_info->request->client_address, so_client, sizeof(struct sockaddr));
@@ -350,7 +350,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
       if (NULL == con_info->post_processor) {
         ulfius_clean_request_full(con_info->request);
         con_info->request = NULL;
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating post_processor");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating post_processor");
         return MHD_NO;
       }
     }
@@ -367,7 +367,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
     if (body_len >= con_info->request->binary_body_length) {
       con_info->request->binary_body = realloc(con_info->request->binary_body, body_len);
       if (con_info->request->binary_body == NULL) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info->request->binary_body");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for con_info->request->binary_body");
         return MHD_NO;
       } else {
         memcpy(con_info->request->binary_body + con_info->request->binary_body_length, upload_data, upload_data_size_current);
@@ -408,17 +408,17 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
     
       response = malloc(sizeof(struct _u_response));
       if (response == NULL) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating response");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating response");
         return MHD_NO;
       }
       if (ulfius_init_response(response) != U_OK) {
         free(response);
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error ulfius_init_response");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error ulfius_init_response");
         return MHD_NO;
       }
       if (ulfius_parse_url(url, current_endpoint, con_info->request->map_url) != U_OK) {
         free(response);
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error parsing url: ", url);
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error parsing url: ", url);
         return MHD_NO;
       }
       
@@ -446,12 +446,12 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
           mhd_response = MHD_create_response_from_buffer (response_buffer_len, response_buffer, MHD_RESPMEM_MUST_FREE );
           if (ulfius_set_response_header(mhd_response, response->map_header) == -1 || ulfius_set_response_cookie(mhd_response, response) == -1) {
             inner_error = U_ERROR_PARAMS;
-            y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error setting headers or cookies");
+            //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error setting headers or cookies");
             response->status = MHD_HTTP_INTERNAL_SERVER_ERROR;
             response->string_body = nstrdup(ULFIUS_HTTP_ERROR_BODY);
             if (response->string_body == NULL) {
               inner_error = U_ERROR_MEMORY;
-              y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response->string_body");
+              //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response->string_body");
               return MHD_NO;
             }
           }
@@ -460,7 +460,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
           response_buffer = nstrdup(ULFIUS_HTTP_ERROR_BODY);
           if (response_buffer == NULL) {
             inner_error = U_ERROR_MEMORY;
-            y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
+            //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
             return MHD_NO;
           }
           response_buffer_len = strlen(ULFIUS_HTTP_ERROR_BODY);
@@ -495,20 +495,20 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
             // Call the stream_callback function to build the response body
             mhd_response = MHD_create_response_from_callback(response->stream_size, response->stream_block_size, (MHD_ContentReaderCallback)response->stream_callback, response->stream_user_data, response->stream_callback_free);
             if (mhd_response == NULL) {
-              y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_create_response_from_callback");
+              //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_create_response_from_callback");
               return MHD_NO;
             } else if (ulfius_set_response_header(mhd_response, response->map_header) == -1 || ulfius_set_response_cookie(mhd_response, response) == -1) {
-              y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error setting headers or cookies");
+              //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error setting headers or cookies");
               return MHD_NO;
             }
           } else if (ulfius_get_body_from_response(response, &response_buffer, &response_buffer_len) == U_OK) {
             // Build the response body based on the response->*_body parameters
             mhd_response = MHD_create_response_from_buffer (response_buffer_len, response_buffer, MHD_RESPMEM_MUST_FREE );
             if (mhd_response == NULL) {
-              y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_create_response_from_buffer");
+              //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error MHD_create_response_from_buffer");
               return MHD_NO;
             } else if (ulfius_set_response_header(mhd_response, response->map_header) == -1 || ulfius_set_response_cookie(mhd_response, response) == -1) {
-              y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error setting headers or cookies");
+              //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error setting headers or cookies");
               return MHD_NO;
             }
           } else {
@@ -516,7 +516,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
             response->status = MHD_HTTP_INTERNAL_SERVER_ERROR;
             response_buffer = nstrdup(ULFIUS_HTTP_ERROR_BODY);
             if (response_buffer == NULL) {
-              y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
+              //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
               return MHD_NO;
             }
             response_buffer_len = strlen(ULFIUS_HTTP_ERROR_BODY);
@@ -527,7 +527,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
           response->status = MHD_HTTP_INTERNAL_SERVER_ERROR;
           response_buffer = nstrdup(ULFIUS_HTTP_ERROR_BODY);
           if (response_buffer == NULL) {
-            y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
+            //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
             return MHD_NO;
           }
           response_buffer_len = strlen(ULFIUS_HTTP_ERROR_BODY);
@@ -544,7 +544,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
         // Error building response, sending error 500
         response_buffer = nstrdup(ULFIUS_HTTP_ERROR_BODY);
         if (response_buffer == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
           return MHD_NO;
         }
         response_buffer_len = strlen(ULFIUS_HTTP_ERROR_BODY);
@@ -560,7 +560,7 @@ int ulfius_webservice_dispatcher (void * cls, struct MHD_Connection * connection
     } else {
       response_buffer = nstrdup(ULFIUS_HTTP_NOT_FOUND_BODY);
       if (response_buffer == NULL) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for response_buffer");
         return MHD_NO;
       }
       response_buffer_len = strlen(ULFIUS_HTTP_NOT_FOUND_BODY);
@@ -699,7 +699,7 @@ struct _u_endpoint * ulfius_duplicate_endpoint_list(const struct _u_endpoint * e
   if (endpoint_list != NULL) {
     for (i=0; endpoint_list[i].http_method != NULL; i++) {
       if ((to_return = realloc(to_return, (i+1)*sizeof(struct _u_endpoint *))) == NULL) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for duplicate_endpoint_list.to_return");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for duplicate_endpoint_list.to_return");
         return NULL;
       } else {
         ulfius_copy_endpoint(&to_return[i], &endpoint_list[i]);
@@ -757,7 +757,7 @@ int ulfius_add_endpoint(struct _u_instance * u_instance, const struct _u_endpoin
         // No endpoint, create a list with 2 endpoints so the last one is an empty one
         u_instance->endpoint_list = malloc(2 * sizeof(struct _u_endpoint));
         if (u_instance->endpoint_list == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error allocating memory for u_instance->endpoint_list");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error allocating memory for u_instance->endpoint_list");
           return U_ERROR_MEMORY;
         }
         u_instance->nb_endpoints = 1;
@@ -765,14 +765,14 @@ int ulfius_add_endpoint(struct _u_instance * u_instance, const struct _u_endpoin
         // List has endpoints, append this one if it doesn't exist yet
         for (i=0; i <= u_instance->nb_endpoints; i++) {
           if (ulfius_equals_endpoints(u_endpoint, &(u_instance->endpoint_list[i]))) {
-            y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error endpoint '%s %s%s' already exist", u_endpoint->http_method, u_endpoint->url_prefix, u_endpoint->url_format);
+            //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error endpoint '%s %s%s' already exist", u_endpoint->http_method, u_endpoint->url_prefix, u_endpoint->url_format);
             return U_ERROR_PARAMS;
           }
         }
         u_instance->nb_endpoints++;
         u_instance->endpoint_list = realloc(u_instance->endpoint_list, (u_instance->nb_endpoints + 1) * sizeof(struct _u_endpoint));
         if (u_instance->endpoint_list == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error reallocating memory for u_instance->endpoint_list");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error reallocating memory for u_instance->endpoint_list");
           return U_ERROR_MEMORY;
         }
       }
@@ -785,11 +785,11 @@ int ulfius_add_endpoint(struct _u_instance * u_instance, const struct _u_endpoin
       }
       return U_OK;
     } else {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, invalid struct _u_endpoint");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, invalid struct _u_endpoint");
       return U_ERROR_PARAMS;
     }
   } else {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, invalid parameters");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, invalid parameters");
     return U_ERROR_PARAMS;
   }
   return U_ERROR;
@@ -813,7 +813,7 @@ int ulfius_add_endpoint_list(struct _u_instance * u_instance, const struct _u_en
     }
     return U_OK;
   } else {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint_list, invalid parameters");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint_list, invalid parameters");
     return U_ERROR_PARAMS;
   }
   return U_ERROR;
@@ -848,14 +848,14 @@ int ulfius_remove_endpoint(struct _u_instance * u_instance, const struct _u_endp
         u_instance->nb_endpoints--;
         u_instance->endpoint_list = realloc(u_instance->endpoint_list, (u_instance->nb_endpoints + 1)*sizeof(struct _u_endpoint));
         if (u_instance->endpoint_list == NULL) {
-          y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error reallocating memory for u_instance->endpoint_list");
+          //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_add_endpoint, Error reallocating memory for u_instance->endpoint_list");
           return U_ERROR_MEMORY;
         }
       }
     }
     return U_OK;
   } else {
-    y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_remove_endpoint, invalid parameters");
+    //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - ulfius_remove_endpoint, invalid parameters");
     return U_ERROR_PARAMS;
   }
   return U_ERROR;
@@ -914,7 +914,7 @@ int ulfius_init_instance(struct _u_instance * u_instance, int port, struct socka
     u_instance->endpoint_list = NULL;
     u_instance->default_headers = malloc(sizeof(struct _u_map));
     if (u_instance->default_headers == NULL) {
-      y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for u_instance->default_headers");
+      //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for u_instance->default_headers");
       return U_ERROR_MEMORY;
     }
     u_map_init(u_instance->default_headers);
@@ -1044,7 +1044,7 @@ int ulfius_set_default_endpoint(struct _u_instance * u_instance,
     if (u_instance->default_endpoint == NULL) {
       u_instance->default_endpoint = malloc(sizeof(struct _u_endpoint));
       if (u_instance->default_endpoint == NULL) {
-        y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for u_instance->default_endpoint");
+        //y_log_message(Y_LOG_LEVEL_ERROR, "Ulfius - Error allocating memory for u_instance->default_endpoint");
         return U_ERROR_MEMORY;
       }
     }
